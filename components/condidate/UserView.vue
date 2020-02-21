@@ -8,11 +8,16 @@
     <div class="model">
       <el-dialog title="Tips" :visible.sync="dialogVisible" width="20%">
         <span>
-          <el-cascader placeholder="Try searchingL Guide" :options="vacancies" filterable></el-cascader>
+          <el-cascader
+            placeholder="Try searchingL Guide"
+            v-model="selectedVacancy"
+            :options="vacancies"
+            filterable
+          ></el-cascader>
         </span>
         <div>
           <el-button @click="dialogVisible = false">Cancel</el-button>
-          <el-button type="primary" @click="dialogVisible = false">add</el-button>
+          <el-button type="primary" @click="handleSaveVacancy">add</el-button>
         </div>
       </el-dialog>
     </div>
@@ -34,6 +39,7 @@
             <img :src="user.attributes.avatar" class="image" />
             <div style="padding: 14px; ">
               <span>{{user.name}}</span>
+
               <div class="bottom clearfix">
                 <time class="time">{{ user.created_at }}</time>
                 <router-link
@@ -44,6 +50,13 @@
                   View
                   <i class="icon-eye-open" style="font-size:17px; margin-left:3px"></i>
                 </router-link>
+                <el-tag
+                  closable
+                  @close="handleDeleveVacancy(user, v)"
+                  v-for="(v, index) in user.vacancies"
+                  :key="index"
+                >{{v.title}}</el-tag>
+
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
@@ -75,6 +88,7 @@ import User from "../../src/modes/User";
 export default {
   data() {
     return {
+      selectedVacancy: null,
       dialogVisible: false,
       vacancies: [],
       options: [{ value: "sdkfj", label: "sdlfkj" }],
@@ -91,8 +105,34 @@ export default {
   },
 
   methods: {
+    async handleSaveVacancy() {
+      if (!this.selectedVacancy || !this.selectedVacancy.length) {
+        return;
+      }
+      const { data: vacancy } = await Axios.post("/users/attach-vacancies", {
+        users: this.checkedUser,
+        vacancy_id: this.selectedVacancy[0]
+      });
+      this.checkedUser.forEach(userId => {
+        this.users.forEach(user => {
+          if (user.id === userId) {
+            user.addVacancy(vacancy);
+          }
+        });
+      });
+      this.checkedUser = [];
+      this.dialogVisible = false;
+    },
     navigateToHome() {
       this.$router.push("/");
+    },
+    async handleDeleveVacancy(user, vacancy) {
+      if (confirm("are you sure want to delete")) {
+        const { data } = await Axios.delete(
+          `/users/${vacancy.pivot.user_id}/vacancies/${vacancy.id}`
+        );
+        user.removeVacancy(vacancy);
+      }
     },
     async fetchData() {
       this.fullscreenLoading = true;

@@ -55,7 +55,17 @@ class User {
         return this.attributes.experiences.map(experience => new Experiance(experience));
     }
 
+    get vacancies() {
+        return this.attributes.vacancies || [];
+    }
 
+    addVacancy(v) {
+        return this.attributes.vacancies.push(v);
+    }
+
+    removeVacancy(v) {
+        this.attributes.vacancies = this.attributes.vacancies.filter(ov => ov.id !== v.id);
+    }
     async createEducation(education) {
         const { data } = await Axios.post(`${User.basePath}/${this.id}/educations`, education);
         return this.attributes.educations.push(new Education(data));
