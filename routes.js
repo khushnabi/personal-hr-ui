@@ -11,19 +11,26 @@ import VacansyQues from "./components/vacancy/VacancyQues.vue";
 
 
 export const routes = [
-    { path: '/', component: Home},
+    { path: '/', component: Home },
     { path: '/create-vacancy', component: CreateVacancy },
-    { path: '/vacancy', component: Vacancy, children:[
-        {path: '', component: vacancyView},
-        {path: ':id/question', component: VacansyQues},
-        {path : ':id/edit', component: CreateVacancy}
-    ] },
-    {  path: '/users', component: User, children: [
-        { path: '', component:UserView},
-        { path: ':id', component: UserDetail },
-        { path: ':id/edit', component:UserEdit }
-    ]},
-    { path: '/create', component: Create, children:[
-        { path: ':id', component: Create }
-    ]}
+    {
+        path: '/vacancy', component: Vacancy, children: [
+            { path: '', component: vacancyView },
+            { path: ':id/question', component: VacansyQues },
+            { path: ':id/edit', component: CreateVacancy }
+        ]
+    },
+    {
+        path: '/users', component: User, children: [
+            { path: '', component: UserView },
+            { path: ':id', component: UserDetail },
+            { path: ':id/edit', component: UserEdit }
+        ]
+    },
+    {
+        path: '/create', component: Create, children: [
+            { path: '', component: Create },
+            { path: ':id', component: Create }
+        ]
+    }
 ];

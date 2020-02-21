@@ -55,7 +55,6 @@ class Vacancy {
 
     async UpdateQuestio(id, attr) {
         const { data } = await Axios.put(`/vacancies/${this.id}/questions/${id}`, attr);
-        cd
     }
 }
 
